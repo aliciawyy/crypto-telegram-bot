@@ -9,10 +9,10 @@ install:
   - pip install codecov
 
 script:
-  - pytest . -v --cov=.
+  - # pytest . -v --cov=.
 
 after_success:
-  - codecov
+  - # codecov
 
 deploy:
   provider: pypi
