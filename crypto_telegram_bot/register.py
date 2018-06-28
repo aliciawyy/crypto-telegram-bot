@@ -54,9 +54,6 @@ def start(bot, update):
 
 def register(bot, update):
     code = update.message.text
-    bot.send_message(
-        chat_id=update.message.chat_id, text=code
-    )
     user_id = update.effective_user.id
     if code == utils.SECRET_CODE:
         utils.ALL_USERS.add(user_id)
