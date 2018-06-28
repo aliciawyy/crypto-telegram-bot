@@ -1,7 +1,6 @@
 language: python
 
 python:
-  - "3.5"
   - "3.6"
 
 install:
@@ -9,15 +8,15 @@ install:
   - pip install codecov
 
 script:
-  - # pytest . -v --cov=.
+  - pytest . -v --cov=.
 
 after_success:
-  - # codecov
+  - codecov
 
 deploy:
   provider: pypi
   user: $PYPI_USERNAME
   password: $PYPI_PASSWORD
   on:
-    python: "3.5"
+    python: "3.6"
     tags: true

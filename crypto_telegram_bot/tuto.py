@@ -29,14 +29,6 @@ updater = base.Updater(token=base.TOKEN)
 dispatcher = updater.dispatcher
 
 
-def start(bot, update):
-    bot.send_message(
-        chat_id=update.message.chat_id,
-        text="Hi {}, I'm a bot bot, please talk to me!".format(
-            update.message.from_user.name)
-    )
-
-
 def echo(bot, update):
     bot.send_message(
         chat_id=update.message.chat_id, text=update.message.text
@@ -133,7 +125,7 @@ def buttons_show(bot, update):
     )
 
 
-dispatcher.add_handler(CommandHandler('start', start))
+dispatcher.add_handler(CommandHandler('start', base.start))
 dispatcher.add_handler(CommandHandler('register', base.register, pass_args=True))
 dispatcher.add_handler(CommandHandler('caps', caps, pass_args=True))
 dispatcher.add_handler(CommandHandler('nice_caps', nice_caps, pass_args=True))
