@@ -1,69 +1,8 @@
-import os
-from functools import lru_cache, wraps
-
 from . import tl
 from . import utils
 
-TOKEN = os.environ["TL_CRYPTO_BOT"]
-_USERS_FILENAME = os.path.join(
-    os.path.dirname(__file__), "..", "data", "users.txt"
-)
-with open(_USERS_FILENAME, "r") as f:
-    ALL_USERS = set(f.readlines())
-SECRET_CODE = "3561"
 
-
-@lru_cache(maxsize=10)
-def updater(token):
-    return tl.Updater(token=token)
-
-
-def restricted(func):
-    @wraps(func)
-    def wrapped(bot, update, *args, **kwargs):
-        user_id = update.effective_user.id
-        if user_id not in ALL_USERS:
-            bot.send_message(
-                chat_id=update.message.chat_id,
-                text="Sorry, you need to /register first with a code."
-            )
-            return
-        return func(bot, update, *args, **kwargs)
-    return wrapped
-
-
-def start(bot, update):
-    msg = ("Hi {}, welcome to use our trading bot! You can first register "
-           "with the code you received before"
-           ".".format(update.message.from_user.name))
-    keyboards = tl.ReplyKeyboardMarkup(
-        utils.build_menu([tl.KeyboardButton("/register")], n_cols=1),
-        resize_keyboard=True)
-    update.message.reply_text(msg, reply_markup=keyboards)
-
-
-def register(bot, update):
-    user_id = update.effective_user.id
-    if user_id not in ALL_USERS:
-
-        ALL_USERS.add(user_id)
-        with open(_USERS_FILENAME, "a") as f_:
-            f_.write("\n{}".format(user_id))
-        text = "Registration successful! :)"
-    else:
-        text = "Sorry, the registration code is wrong :("
-    bot.send_message(
-        chat_id=update.message.chat_id, text=text
-    )
-
-
-def clear_chat_data(chat_data):
-    if chat_data:
-        for key in list(chat_data.keys()):
-            del chat_data[key]
-
-
-def main_menu():
+def trade_menu(bot, update):
     reply_msg = "Buy or sell?"
 
     buttons = [
@@ -78,10 +17,6 @@ def main_menu():
     reply_mrk = tl.ReplyKeyboardMarkup(menu, resize_keyboard=True)
     update.message.reply_text(reply_msg, reply_markup=reply_mrk)
 
-
-def cancel(bot, update, chat_data=None):
-    update.message.reply_text("Canceled...", reply_markup=main_menu())
-    return tl.ConversationHandler.END
 
 """
 trade_handler = tl.ConversationHandler(
