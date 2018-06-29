@@ -126,16 +126,16 @@ def buttons_show(bot, update):
         text="A two-column menu", reply_markup=reply_markup
     )
 
-
 dispatcher.add_handler(register.workflow_handler())
+dispatcher.add_handler(MessageHandler(Filters.command, unknown))
+
+
 dispatcher.add_handler(CommandHandler('caps', caps, pass_args=True))
 dispatcher.add_handler(CommandHandler('nice_caps', nice_caps, pass_args=True))
 dispatcher.add_handler(CommandHandler('request', request_location))
-dispatcher.add_handler(CommandHandler('buttons', buttons_show))
-dispatcher.add_handler(CommandHandler('cancel', register.cancel))
+
 dispatcher.add_handler(InlineQueryHandler(inline_caps))
 
-dispatcher.add_handler(MessageHandler(Filters.command, unknown))
 
 updater.start_polling()
 updater.idle()

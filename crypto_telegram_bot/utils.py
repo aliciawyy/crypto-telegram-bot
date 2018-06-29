@@ -24,20 +24,24 @@ def cancel_button():
 @unique
 class CommandEnum(Enum):
     START = auto()
-    REGISTER = auto()
-    CANCEL = auto()
+    CHOOSE_INDEX = auto()
+    CHOOSE_EXCHANGE = auto()
 
-    def text(self):
-        return self.name.replace("_", " ").lower()
+    def lower(self):
+        return self.name.lower()
 
     def command(self):
-        return "/" + self.name.lower()
+        return "/" + self.lower()
 
 
 @unique
 class WorkflowEnum(Enum):
-    REGISTER = auto()
-    RECEIVE_INFO = auto()
+    SIGNUP = auto()
+    CHOOSE_EXCHANGE = auto()
+    CHOOSE_INDEX = auto()
+    RECEIVE_INDEX = auto()
+    GET_KRAKEN_API = auto()
+    DONE = auto()
 
 
 def build_menu(buttons, n_cols=1, header_buttons=None, footer_buttons=None):
