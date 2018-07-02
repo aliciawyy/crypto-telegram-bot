@@ -9,13 +9,19 @@ logging.basicConfig(
     level=logging.INFO
 )
 
-utils.print_bot_information()
 
-updater = utils.updater(token=utils.TOKEN)
-dp = updater.dispatcher
+def main():
+    utils.print_bot_information()
 
-dp.add_handler(register.workflow_handler())
-dp.add_handler(tl.MessageHandler(tl.Filters.command, register.unknown))
+    updater = utils.updater(token=utils.TOKEN)
+    dp = updater.dispatcher
 
-updater.start_polling()
-updater.idle()
+    dp.add_handler(register.workflow_handler())
+    dp.add_handler(tl.MessageHandler(tl.Filters.command, register.unknown))
+
+    updater.start_polling()
+    updater.idle()
+
+
+if __name__ == "__main__":
+    main()

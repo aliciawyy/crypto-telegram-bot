@@ -13,11 +13,10 @@ except ImportError:
         return _number_auto
 
 from . import tl
+from .users import Users
 
 TOKEN = environ.get("TL_CRYPTO_BOT")
-USERS_FILENAME = path.join(path.dirname(__file__), "..", "data", "users.txt")
-with open(USERS_FILENAME, "r") as f:
-    ALL_USERS = set(f.readlines())
+USERS = Users(path.join(path.dirname(__file__), "..", "data", "users.json"))
 SECRET_CODE = "3561"
 
 

@@ -22,7 +22,7 @@ def restricted(func):
     @wraps(func)
     def wrapped(bot, update, *args, **kwargs):
         user_id = update.effective_user.id
-        if user_id not in utils.ALL_USERS:
+        if user_id not in utils.USERS:
             bot.send_message(
                 chat_id=update.message.chat_id,
                 text="Sorry, you need to signup first with an invitation "
@@ -38,7 +38,7 @@ def start(bot, update):
         update.message.from_user.name
     )
     user_id = str(update.effective_user.id)
-    if user_id not in utils.ALL_USERS or user_id == "590081078":
+    if user_id not in utils.USERS or user_id == "590081078":
         msg += (" You can first signup with an invitation code. "
                 "Please enter the code")
         update.message.reply_text(msg)
@@ -52,9 +52,7 @@ def check_secret_code(bot, update):
     code = update.message.text
     user_id = update.effective_user.id
     if code == utils.SECRET_CODE:
-        utils.ALL_USERS.add(user_id)
-        with open(utils.USERS_FILENAME, "a") as f_:
-            f_.write("\n{}".format(user_id))
+        utils.USERS.add(user_id)
         bot.send_message(
             chat_id=update.message.chat_id,
             text="Registration successful! :)"
