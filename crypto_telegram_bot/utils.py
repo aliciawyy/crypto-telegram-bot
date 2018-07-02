@@ -1,7 +1,18 @@
 from os import environ, path
 from functools import lru_cache
 import re
-from enum import Enum, auto, unique
+from enum import Enum, unique
+
+try:
+    from enum import auto
+except ImportError:
+    _number_auto = 0
+
+    def auto():
+        global _number_auto
+        _number_auto += 1
+        return _number_auto
+
 
 from . import tl
 
