@@ -1,6 +1,5 @@
 from os import environ, path
 from functools import lru_cache
-import re
 from enum import Enum, unique
 
 try:
@@ -62,7 +61,3 @@ def build_menu(buttons, n_cols=1, header_buttons=None, footer_buttons=None):
     if footer_buttons:
         menu.append(footer_buttons)
     return menu
-
-
-def comp(pattern):
-    return re.compile("^" + pattern + "$", re.IGNORECASE)

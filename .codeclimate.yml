@@ -19,5 +19,3 @@ plugins:
     enabled: true
   sonar-python:
     enabled: true
-exclude_patterns:
-  - notebooks/
