@@ -20,9 +20,13 @@ class Users(object):
         user_info = self.data.get(user_id, {})
         user_info.update(info or {})
         self.data[str(user_id)] = user_info
-        json.dump(
-            self.data, open(self.filename, "w"), sort_keys=True, indent=2
-        )
+        self._write_data()
 
     def delete(self, user_id):
         self.data.pop(user_id)
+        self._write_data()
+
+    def _write_data(self):
+        json.dump(
+            self.data, open(self.filename, "w"), sort_keys=True, indent=2
+        )

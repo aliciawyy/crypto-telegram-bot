@@ -19,6 +19,15 @@ class UsersTest(TestCase):
         assert args[0] == self.users.data
         assert info == self.users[self.user_id]
 
+    @mock.patch("json.dump")
+    def test_delete(self, m_dump):
+        user_id = "32516"
+        with mock.patch("builtins.open"):
+            self.users.delete(user_id)
+        args, kwargs = m_dump.call_args
+        expected = {"000000000": {}}
+        assert expected == args[0] == self.users.data
+
     def test_contains(self):
         assert self.user_id not in self.users
         assert "32516" in self.users
