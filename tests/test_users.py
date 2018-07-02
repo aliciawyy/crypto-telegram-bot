@@ -1,20 +1,24 @@
 from os import path
-import mock
-from unittest import TestCase
+from unittest import TestCase, mock
 
-from crypto_telegram_bot.users import Users
+from crypto_telegram_bot import users
 
 
 class UsersTest(TestCase):
     def setUp(self):
         filename = path.join(path.dirname(__file__), "data", "users.json")
-        self.users = Users(filename)
+        self.users = users.Users(filename)
+        self.user_id = "452516"
 
     @mock.patch("json.dump")
     def test_add(self, m_dump):
-        user_id = "452516"
         info = {"index": "CRC3"}
-        self.users.add(user_id, info)
+        with mock.patch("builtins.open"):
+            self.users.add(self.user_id, info)
         args, kwargs = m_dump.call_args
         assert args[0] == self.users.data
-        assert info == self.users[user_id]
+        assert info == self.users[self.user_id]
+
+    def test_contains(self):
+        assert self.user_id not in self.users
+        assert "32516" in self.users

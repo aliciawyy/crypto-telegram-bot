@@ -38,7 +38,6 @@ setup(
         "test": [
             "pytest==3.6.1",
             "pytest-cov==2.5.1",
-            "mock==2.0.0"
         ]
     }
 )
