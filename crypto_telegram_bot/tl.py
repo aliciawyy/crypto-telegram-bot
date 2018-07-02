@@ -1,3 +1,4 @@
+from telegram import Bot
 from telegram.ext import (
     Updater,
     ConversationHandler,

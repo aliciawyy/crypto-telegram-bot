@@ -18,13 +18,7 @@ logging.basicConfig(
     level=logging.INFO
 )
 
-
-def print_bot_information():
-    bot_ = telegram.Bot(token=utils.TOKEN)
-    print(bot_.get_me())
-
-
-print_bot_information()
+utils.print_bot_information()
 
 updater = utils.updater(token=utils.TOKEN)
 dispatcher = updater.dispatcher
@@ -73,13 +67,6 @@ def request_location(bot, update):
     )
 
 
-def unknown(bot, update):
-    bot.send_message(
-        chat_id=update.message.chat_id,
-        text="Sorry, I didn't understand that command. :("
-    )
-
-
 def inline_caps(bot, update):
     query = update.inline.query
     if not query:
@@ -92,18 +79,6 @@ def inline_caps(bot, update):
         ),
     ]
     bot.answer_inline_query(update.inline_query.id, result)
-
-
-def build_menu(buttons,
-               n_cols,
-               header_buttons=None,
-               footer_buttons=None):
-    menu = [buttons[i:i + n_cols] for i in range(0, len(buttons), n_cols)]
-    if header_buttons:
-        menu.insert(0, header_buttons)
-    if footer_buttons:
-        menu.append(footer_buttons)
-    return menu
 
 
 def _print(bot, update, chat_data):
@@ -119,7 +94,9 @@ def buttons_show(bot, update):
         InlineKeyboardButton("col2", callback_data=_print),
         InlineKeyboardButton("row 2", callback_data=_print)
     ]
-    reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=2))
+    reply_markup = InlineKeyboardMarkup(
+        utils.build_menu(button_list, n_cols=2)
+    )
     bot.send_message(
         chat_id=update.message.chat_id,
         text="A two-column menu", reply_markup=reply_markup
@@ -127,7 +104,7 @@ def buttons_show(bot, update):
 
 
 dispatcher.add_handler(register.workflow_handler())
-dispatcher.add_handler(MessageHandler(Filters.command, unknown))
+dispatcher.add_handler(MessageHandler(Filters.command, register.unknown))
 
 
 dispatcher.add_handler(CommandHandler('caps', caps, pass_args=True))

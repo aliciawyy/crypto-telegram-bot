@@ -12,7 +12,6 @@ except ImportError:
         _number_auto += 1
         return _number_auto
 
-
 from . import tl
 
 TOKEN = environ.get("TL_CRYPTO_BOT")
@@ -27,8 +26,9 @@ def updater(token):
     return tl.Updater(token=token)
 
 
-def cancel_button():
-    return [tl.KeyboardButton(CommandEnum.CANCEL.command())]
+def print_bot_information():
+    bot_ = tl.Bot(token=TOKEN)
+    print(bot_.get_me())
 
 
 @unique
@@ -46,7 +46,7 @@ class CommandEnum(Enum):
 
 @unique
 class WorkflowEnum(Enum):
-    SIGNUP = auto()
+    CHECK_SECRET_CODE = auto()
     CHOOSE_EXCHANGE = auto()
     CHOOSE_INDEX = auto()
     RECEIVE_INDEX = auto()
