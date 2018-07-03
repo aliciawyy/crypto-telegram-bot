@@ -1,23 +1,18 @@
 language: python
-
 python:
-  - "3.5"
-  - "3.6"
-
+  - '3.5'
+  - '3.6'
 install:
   - pip install .[test]
   - pip install codecov
-
 script:
   - pytest . -v --cov=.
-
 after_success:
   - codecov
-
 deploy:
-  provider: pypi
-  user: $PYPI_USERNAME
-  password: $PYPI_PASSWORD
+  provider: heroku
   on:
-    python: "3.6"
-    tags: true
+    python: '3.6'
+    branch: master
+  api_key:
+    secure: Ng7K46sSOsWyvBnKLgtXG4vwf5Xm6dPx8uYXRLtu8TgxO+dH/KUiIOQZFCU1+Ohy9qNpFvljCbs9cSwJPukAiRXF1KFbWJ80DQJn3zCo3qKoOdUaYHyeeZl3rwyUBXBMwtwNtrqPBhR1juQDDT+FiHXUTdzuESf3B2Ei3J/gjQkhVwVay/X9RLl4LS7WlBrVYv/9aCwlyXXzjyNnwQV3PRZ2TEOijp10LiLJVzRxA2pRtps782hOicPn5w6u7zeMPI/CpdF7/WcgujDQInF6QxIUphbckp0NoPeEr/F+KYGROUXXh9UsaN5FnNeGG9ft/49Lbe9/CavN9UcaeyrX+vOFdmynvfaM1T7TqS6WaKV+V8ED6b3rqYXtGOffM/iUSjryx1N47gIIpa4sw+mbj6Oyq5HkEOyUEwfHU6fIL3HQDXVCpUX8h130vFENqvI/RAzhzMolMcv+wzb07Q5khYtRQ3bMVS2dYL7h7Qdy/iAYGoEJoNqknc9qsjFL8UB0P6moWgLaSZJwW8mVYU6/qbpr27EksxQmb+CE2VqO8Isdn0XpsSNc1a91PpZ3q/nYmz3raquopHv5747heLJ/wuJrPHRB5PUcoFEsOCQVWNou40q1NjZJzk+2avqZUQIKqQgUCT4QKC3+tw+LyVn3QsHwDMAt4tg1va6hDoJI1gs=
