@@ -1,3 +1,4 @@
+from os import environ
 import logging
 import datetime
 
@@ -13,8 +14,15 @@ logging.basicConfig(
 
 
 def main():
+    app_name = "crypto-telegram-bot"
     logging.info(utils.get_bot_information())
     updater = utils.updater(token=utils.TOKEN)
+    updater.start_webhook(listen="0.0.0.0",
+                          port=int(environ.get("PORT", "8443")),
+                          url_path=utils.TOKEN)
+    updater.bot.set_webhook("https://{}.herokuapp.com/{}".format(
+        app_name, utils.TOKEN
+    ))
 
     dp = updater.dispatcher
     dp.add_handler(register.workflow_handler())
