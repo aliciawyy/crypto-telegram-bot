@@ -80,8 +80,9 @@ def choose_index(bot, update):
 
 
 @restricted
-def choose_exchange(bot, update):
+def choose_exchange(bot, update, user_data):
     exchange = update.message.text
+    user_data["exchange"] = exchange
     if exchange == "kraken":
         update.message.reply_text(
             'To trade at kraken, you need to share your kraken api with me. '
@@ -93,27 +94,33 @@ def choose_exchange(bot, update):
 
 
 @restricted
-def receive_index(bot, update):
+def receive_index(bot, update, user_data):
     index = update.message.text
     update.message.reply_text(
         'So you would like to follow the index {}! Nice, '
         'now you can choose an exchange to trade'.format(index),
         reply_markup=tl.ReplyKeyboardMarkup(
-                [["kraken"]], one_time_keyboard=True
+            [["kraken"]], one_time_keyboard=True
         )
     )
+    user_data["index"] = index
     return WF.CHOOSE_EXCHANGE
 
 
-def get_kraken_api(bot, update):
+def get_kraken_api(bot, update, user_data):
     api_keys = update.message.text
     update.message.reply_text(
         "Nice! Now I have registered your keys {}".format(api_keys),
-        reply_markup=main_menu())
+        reply_markup=tl.ReplyKeyboardMarkup(
+            [["Done"]], one_time_keyboard=True
+        ))
+    user_data["api_key"] = api_keys
     return WF.DONE
 
 
-def done(bot, update):
+def done(bot, update, user_data):
+    user_id = update.effective_user.id
+    utils.USERS.add(user_id, user_data)
     update.message.reply_text(
         "Thanks! That's all I need for the signup. See you next time!",
         reply_markup=main_menu())
@@ -134,17 +141,21 @@ def workflow_handler():
             WF.RECEIVE_INDEX: [
                 tl.RegexHandler(
                     '^(CRC3|MinMax BTC,ETH|MinMax BTC,ETH,XLM)$',
-                    receive_index
+                    receive_index, pass_user_data=True,
                 ),
             ],
             WF.CHOOSE_EXCHANGE: [
-                tl.RegexHandler('^(kraken)$', choose_exchange),
+                tl.RegexHandler(
+                    '^(kraken)$', choose_exchange, pass_user_data=True
+                ),
             ],
             WF.GET_KRAKEN_API: [
-                tl.MessageHandler(tl.Filters.text, get_kraken_api)
+                tl.MessageHandler(
+                    tl.Filters.text, get_kraken_api, pass_user_data=True
+                )
             ],
         },
-        fallbacks=[tl.RegexHandler('^Done$', done)],
+        fallbacks=[tl.RegexHandler('^Done$', done, pass_user_data=True)],
         allow_reentry=True
     )
 
