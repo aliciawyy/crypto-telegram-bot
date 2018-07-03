@@ -14,16 +14,17 @@ class Users(object):
         return str(user_id) in self.users
 
     def __getitem__(self, user_id):
-        return self.data.get(user_id)
+        return self.data.get(str(user_id), {})
 
     def add(self, user_id, info=None):
+        user_id = str(user_id)
         user_info = self.data.get(user_id, {})
         user_info.update(info or {})
         self.data[str(user_id)] = user_info
         self._write_data()
 
     def delete(self, user_id):
-        self.data.pop(user_id)
+        self.data.pop(str(user_id))
         self._write_data()
 
     def _write_data(self):

@@ -8,7 +8,7 @@ class UsersTest(TestCase):
     def setUp(self):
         filename = path.join(path.dirname(__file__), "data", "users.json")
         self.users = users.Users(filename)
-        self.user_id = "452516"
+        self.user_id = 452516
 
     @mock.patch("json.dump")
     def test_add(self, m_dump):
@@ -21,7 +21,7 @@ class UsersTest(TestCase):
 
     @mock.patch("json.dump")
     def test_delete(self, m_dump):
-        user_id = "32516"
+        user_id = 32516
         with mock.patch("builtins.open"):
             self.users.delete(user_id)
         args, kwargs = m_dump.call_args
@@ -30,4 +30,4 @@ class UsersTest(TestCase):
 
     def test_contains(self):
         assert self.user_id not in self.users
-        assert "32516" in self.users
+        assert 32516 in self.users

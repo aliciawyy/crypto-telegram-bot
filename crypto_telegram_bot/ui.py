@@ -11,8 +11,7 @@ logging.basicConfig(
 
 
 def main():
-    utils.print_bot_information()
-
+    logging.info(utils.get_bot_information())
     updater = utils.updater(token=utils.TOKEN)
     dp = updater.dispatcher
 

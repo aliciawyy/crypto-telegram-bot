@@ -52,7 +52,6 @@ def check_secret_code(bot, update):
     code = update.message.text
     user_id = update.effective_user.id
     if code == utils.SECRET_CODE:
-        utils.USERS.add(user_id)
         bot.send_message(
             chat_id=update.message.chat_id,
             text="Registration successful! :)"
@@ -80,20 +79,6 @@ def choose_index(bot, update):
 
 
 @restricted
-def choose_exchange(bot, update, user_data):
-    exchange = update.message.text
-    user_data["exchange"] = exchange
-    if exchange == "kraken":
-        update.message.reply_text(
-            'To trade at kraken, you need to share your kraken api with me. '
-            'You can copy paste your api in reply'
-        )
-        return WF.GET_KRAKEN_API
-    else:
-        raise NotImplementedError()
-
-
-@restricted
 def receive_index(bot, update, user_data):
     index = update.message.text
     update.message.reply_text(
@@ -105,6 +90,48 @@ def receive_index(bot, update, user_data):
     )
     user_data["index"] = index
     return WF.CHOOSE_EXCHANGE
+
+
+@restricted
+def choose_exchange(bot, update, user_data):
+    exchange = update.message.text
+    user_data["exchange"] = exchange
+    if exchange != "kraken":
+        raise NotImplementedError()
+    info = utils.USERS[update.effective_user.id]
+    print(info)
+    api_keys = info.get("api_key")
+    if not api_keys:
+        update.message.reply_text(
+            text="To trade at kraken, you need to share your kraken api with "
+                 "me. You can copy paste your api in reply"
+        )
+        return WF.GET_KRAKEN_API
+    else:
+        update.message.reply_text(
+            text="We have registered your api key {}***{}. Do you want to "
+                 "continue to use it?".format(api_keys[:2], api_keys[-2:]),
+            reply_markup=tl.ReplyKeyboardMarkup(
+                [["Yes", "No"]], one_time_keyboard=True)
+        )
+        return WF.UPDATE_KRAKEN_API
+
+
+def update_kraken_api(bot, update):
+    response = update.message.text.lower()
+    if response == "yes":
+        update.message.reply_text(
+            "Good! So I'll continue to trade with the same key.",
+            reply_markup=tl.ReplyKeyboardMarkup(
+                [["Done"]], one_time_keyboard=True
+            )
+        )
+        return WF.DONE
+    elif response == "no":
+        update.message.reply_text(
+            "Ok. You can copy paste your new api in reply"
+        )
+        return WF.GET_KRAKEN_API
 
 
 def get_kraken_api(bot, update, user_data):
@@ -149,6 +176,9 @@ def workflow_handler():
                 tl.RegexHandler(
                     '^(kraken)$', choose_exchange, pass_user_data=True
                 ),
+            ],
+            WF.UPDATE_KRAKEN_API: [
+                tl.RegexHandler('^(Yes|No)$', update_kraken_api),
             ],
             WF.GET_KRAKEN_API: [
                 tl.MessageHandler(

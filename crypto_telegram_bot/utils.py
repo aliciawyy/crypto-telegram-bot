@@ -25,9 +25,9 @@ def updater(token):
     return tl.Updater(token=token)
 
 
-def print_bot_information():
+def get_bot_information():
     bot_ = tl.Bot(token=TOKEN)
-    print(bot_.get_me())
+    return bot_.get_me()
 
 
 @unique
@@ -50,6 +50,7 @@ class WorkflowEnum(Enum):
     CHOOSE_INDEX = auto()
     RECEIVE_INDEX = auto()
     GET_KRAKEN_API = auto()
+    UPDATE_KRAKEN_API = auto()
     DONE = auto()
 
 
