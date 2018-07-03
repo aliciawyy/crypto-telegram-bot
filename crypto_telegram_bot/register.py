@@ -5,6 +5,7 @@ from . import utils
 
 CMD = utils.CommandEnum
 WF = utils.WorkflowEnum
+UI = utils.UserInfoEnum
 
 
 def main_menu():
@@ -88,19 +89,18 @@ def receive_index(bot, update, user_data):
             [["kraken"]], one_time_keyboard=True
         )
     )
-    user_data["index"] = index
+    user_data[UI.INDEX.value] = index
     return WF.CHOOSE_EXCHANGE
 
 
 @restricted
 def choose_exchange(bot, update, user_data):
     exchange = update.message.text
-    user_data["exchange"] = exchange
+    user_data[UI.EXCHANGE.value] = exchange
     if exchange != "kraken":
         raise NotImplementedError()
     info = utils.USERS[update.effective_user.id]
-    print(info)
-    api_keys = info.get("api_key")
+    api_keys = info.get(UI.API_KEY.value)
     if not api_keys:
         update.message.reply_text(
             text="To trade at kraken, you need to share your kraken api with "
@@ -117,16 +117,10 @@ def choose_exchange(bot, update, user_data):
         return WF.UPDATE_KRAKEN_API
 
 
-def update_kraken_api(bot, update):
+def update_kraken_api(bot, update, user_data):
     response = update.message.text.lower()
     if response == "yes":
-        update.message.reply_text(
-            "Good! So I'll continue to trade with the same key.",
-            reply_markup=tl.ReplyKeyboardMarkup(
-                [["Done"]], one_time_keyboard=True
-            )
-        )
-        return WF.DONE
+        return done(bot, update, user_data)
     elif response == "no":
         update.message.reply_text(
             "Ok. You can copy paste your new api in reply"
@@ -136,18 +130,14 @@ def update_kraken_api(bot, update):
 
 def get_kraken_api(bot, update, user_data):
     api_keys = update.message.text
-    update.message.reply_text(
-        "Nice! Now I have registered your keys {}".format(api_keys),
-        reply_markup=tl.ReplyKeyboardMarkup(
-            [["Done"]], one_time_keyboard=True
-        ))
-    user_data["api_key"] = api_keys
-    return WF.DONE
+    user_data[UI.API_KEY.value] = api_keys
+    return done(bot, update, user_data)
 
 
 def done(bot, update, user_data):
     user_id = update.effective_user.id
-    user_data["name"] = update.message.from_user.name
+    user_data[UI.USER_ID.value] = user_id
+    user_data[UI.NAME.value] = update.message.from_user.name
     utils.USERS.add(user_id, user_data)
     update.message.reply_text(
         "Thanks! That's all I need for the signup. See you next time!",
@@ -158,9 +148,9 @@ def done(bot, update, user_data):
 def workflow_handler():
     return tl.ConversationHandler(
         entry_points=[
-            tl.CommandHandler(CMD.START.lower(), start),
-            tl.CommandHandler(CMD.CHOOSE_INDEX.lower(), choose_index),
-            tl.CommandHandler(CMD.CHOOSE_EXCHANGE.lower(), choose_exchange),
+            tl.CommandHandler(CMD.START.value, start),
+            tl.CommandHandler(CMD.CHOOSE_INDEX.value, choose_index),
+            tl.CommandHandler(CMD.CHOOSE_EXCHANGE.value, choose_exchange),
         ],
         states={
             WF.CHECK_SECRET_CODE: [
@@ -178,7 +168,9 @@ def workflow_handler():
                 ),
             ],
             WF.UPDATE_KRAKEN_API: [
-                tl.RegexHandler('^(Yes|No)$', update_kraken_api),
+                tl.RegexHandler(
+                    '^(Yes|No)$', update_kraken_api, pass_user_data=True
+                ),
             ],
             WF.GET_KRAKEN_API: [
                 tl.MessageHandler(
