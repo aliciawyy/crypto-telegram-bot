@@ -30,23 +30,23 @@ def get_bot_information():
     return bot_.get_me()
 
 
-class StringEnum(Enum):
-    def _generate_next_value_(name, start, count, last_values):
-        return name.lower()
+class StrEnum(Enum):
+    def lower(self):
+        return self.name.lower()
 
 
 @unique
-class CommandEnum(StringEnum):
+class CommandEnum(StrEnum):
     START = auto()
     CHOOSE_INDEX = auto()
     CHOOSE_EXCHANGE = auto()
 
     def command(self):
-        return "/" + self.value
+        return "/" + self.lower()
 
 
 @unique
-class WorkflowEnum(StringEnum):
+class WorkflowEnum(StrEnum):
     CHECK_SECRET_CODE = auto()
     CHOOSE_EXCHANGE = auto()
     CHOOSE_INDEX = auto()
@@ -57,7 +57,7 @@ class WorkflowEnum(StringEnum):
 
 
 @unique
-class UserInfoEnum(StringEnum):
+class UserInfoEnum(StrEnum):
     API_KEY = auto()
     NAME = auto()
     USER_ID = auto()

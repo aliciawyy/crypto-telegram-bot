@@ -89,18 +89,18 @@ def receive_index(bot, update, user_data):
             [["kraken"]], one_time_keyboard=True
         )
     )
-    user_data[UI.INDEX.value] = index
+    user_data[UI.INDEX.lower()] = index
     return WF.CHOOSE_EXCHANGE
 
 
 @restricted
 def choose_exchange(bot, update, user_data):
     exchange = update.message.text
-    user_data[UI.EXCHANGE.value] = exchange
+    user_data[UI.EXCHANGE.lower()] = exchange
     if exchange != "kraken":
         raise NotImplementedError()
     info = utils.USERS[update.effective_user.id]
-    api_keys = info.get(UI.API_KEY.value)
+    api_keys = info.get(UI.API_KEY.lower())
     if not api_keys:
         update.message.reply_text(
             text="To trade at kraken, you need to share your kraken api with "
@@ -130,14 +130,14 @@ def update_kraken_api(bot, update, user_data):
 
 def get_kraken_api(bot, update, user_data):
     api_keys = update.message.text
-    user_data[UI.API_KEY.value] = api_keys
+    user_data[UI.API_KEY.lower()] = api_keys
     return done(bot, update, user_data)
 
 
 def done(bot, update, user_data):
     user_id = update.effective_user.id
-    user_data[UI.USER_ID.value] = user_id
-    user_data[UI.NAME.value] = update.message.from_user.name
+    user_data[UI.USER_ID.lower()] = user_id
+    user_data[UI.NAME.lower()] = update.message.from_user.name
     utils.USERS.add(user_id, user_data)
     update.message.reply_text(
         "Thanks! That's all I need for the signup. See you next time!",
@@ -148,9 +148,9 @@ def done(bot, update, user_data):
 def workflow_handler():
     return tl.ConversationHandler(
         entry_points=[
-            tl.CommandHandler(CMD.START.value, start),
-            tl.CommandHandler(CMD.CHOOSE_INDEX.value, choose_index),
-            tl.CommandHandler(CMD.CHOOSE_EXCHANGE.value, choose_exchange),
+            tl.CommandHandler(CMD.START.lower(), start),
+            tl.CommandHandler(CMD.CHOOSE_INDEX.lower(), choose_index),
+            tl.CommandHandler(CMD.CHOOSE_EXCHANGE.lower(), choose_exchange),
         ],
         states={
             WF.CHECK_SECRET_CODE: [
