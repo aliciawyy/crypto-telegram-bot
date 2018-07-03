@@ -113,7 +113,5 @@ dispatcher.add_handler(CommandHandler('request', request_location))
 
 dispatcher.add_handler(InlineQueryHandler(inline_caps))
 
-
 updater.start_polling()
 updater.idle()
-

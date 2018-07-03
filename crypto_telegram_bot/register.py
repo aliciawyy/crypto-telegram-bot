@@ -35,7 +35,7 @@ def restricted(func):
 
 def start(bot, update):
     msg = "Hi {}, welcome to our trading bot!".format(
-        update.message.from_user.name
+        update.message.from_user.first_name
     )
     user_id = str(update.effective_user.id)
     if user_id not in utils.USERS or user_id == "590081078":
@@ -120,6 +120,7 @@ def get_kraken_api(bot, update, user_data):
 
 def done(bot, update, user_data):
     user_id = update.effective_user.id
+    user_data["name"] = update.message.from_user.name
     utils.USERS.add(user_id, user_data)
     update.message.reply_text(
         "Thanks! That's all I need for the signup. See you next time!",
