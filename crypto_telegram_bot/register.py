@@ -112,8 +112,7 @@ def choose_exchange(bot, update, user_data):
             text="We have registered your api key {}***{}. Do you want to "
                  "continue to use it?".format(api_keys[:2], api_keys[-2:]),
             reply_markup=tl.ReplyKeyboardMarkup(
-                [["Yes", "No"]], one_time_keyboard=True, resize_keyboard=True
-            )
+                [["Yes", "No"]], one_time_keyboard=True, resize_keyboard=True)
         )
         return WF.UPDATE_KRAKEN_API
 
