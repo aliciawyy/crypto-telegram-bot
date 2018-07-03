@@ -19,6 +19,8 @@ def main():
     dp = updater.dispatcher
     dp.add_handler(register.workflow_handler())
     dp.add_handler(tl.MessageHandler(tl.Filters.command, register.unknown))
+    dp.add_handler(tl.CommandHandler(
+        utils.CommandEnum.UNSUBSCRIBE.command(), register.unsubscribe))
 
     jq = updater.job_queue
     jq.run_daily(

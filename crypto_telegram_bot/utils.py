@@ -40,6 +40,7 @@ class CommandEnum(StrEnum):
     START = auto()
     CHOOSE_INDEX = auto()
     CHOOSE_EXCHANGE = auto()
+    UNSUBSCRIBE = auto()
 
     def command(self):
         return "/" + self.lower()
@@ -63,6 +64,7 @@ class UserInfoEnum(StrEnum):
     USER_ID = auto()
     INDEX = auto()
     EXCHANGE = auto()
+    ACTIVE = auto()
 
 
 def build_menu(buttons, n_cols=1, header_buttons=None, footer_buttons=None):

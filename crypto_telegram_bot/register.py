@@ -86,7 +86,7 @@ def receive_index(bot, update, user_data):
         'So you would like to follow the index {}! Nice, '
         'now you can choose an exchange to trade'.format(index),
         reply_markup=tl.ReplyKeyboardMarkup(
-            [["kraken"]], one_time_keyboard=True
+            [["kraken"]], one_time_keyboard=True, resize_keyboard=True
         )
     )
     user_data[UI.INDEX.lower()] = index
@@ -112,7 +112,8 @@ def choose_exchange(bot, update, user_data):
             text="We have registered your api key {}***{}. Do you want to "
                  "continue to use it?".format(api_keys[:2], api_keys[-2:]),
             reply_markup=tl.ReplyKeyboardMarkup(
-                [["Yes", "No"]], one_time_keyboard=True)
+                [["Yes", "No"]], one_time_keyboard=True, resize_keyboard=True
+            )
         )
         return WF.UPDATE_KRAKEN_API
 
@@ -137,12 +138,24 @@ def get_kraken_api(bot, update, user_data):
 def done(bot, update, user_data):
     user_id = update.effective_user.id
     user_data[UI.USER_ID.lower()] = user_id
+    user_data[UI.ACTIVE.lower()] = True
     user_data[UI.NAME.lower()] = update.message.from_user.name
     utils.USERS.add(user_id, user_data)
+    user_data.clear()
     update.message.reply_text(
         "Thanks! That's all I need for the signup. See you next time!",
         reply_markup=main_menu())
     return tl.ConversationHandler.END
+
+
+def unsubscribe(bot, update):
+    user_id = update.effective_user.id
+    info = {UI.ACTIVE.lower(): False}
+    utils.USERS.add(user_id, info)
+    update.message.reply_text(
+        "Unsubscribe successful. You won't receive any information from "
+        "us anymore.", reply_markup=main_menu()
+    )
 
 
 def workflow_handler():
