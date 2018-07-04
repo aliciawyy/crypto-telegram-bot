@@ -1,4 +1,5 @@
 from os import environ
+import platform
 import logging
 import datetime
 
@@ -13,16 +14,17 @@ logging.basicConfig(
 )
 
 
-def main():
-    app_name = "crypto-telegram-bot"
+def main(is_local):
     logging.info(utils.get_bot_information())
     updater = utils.updater(token=utils.TOKEN)
-    updater.start_webhook(listen="0.0.0.0",
-                          port=int(environ.get("PORT", "8443")),
-                          url_path=utils.TOKEN)
-    updater.bot.set_webhook("https://{}.herokuapp.com/{}".format(
-        app_name, utils.TOKEN
-    ))
+    if not is_local:
+        updater.start_webhook(listen="0.0.0.0",
+                              port=int(environ.get("PORT", "8443")),
+                              url_path=utils.TOKEN)
+        app_name = "crypto-telegram-bot"
+        updater.bot.set_webhook("https://{}.herokuapp.com/{}".format(
+            app_name, utils.TOKEN
+        ))
 
     dp = updater.dispatcher
     dp.add_handler(register.workflow_handler())
@@ -41,4 +43,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(is_local=platform.node() in {"stars"})

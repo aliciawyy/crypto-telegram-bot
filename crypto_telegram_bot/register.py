@@ -57,6 +57,7 @@ def check_secret_code(bot, update):
             chat_id=update.message.chat_id,
             text="Registration successful! :)"
         )
+        utils.USERS.add(user_id)
         return choose_index(bot, update)
     else:
         text = "Sorry, the registration code is wrong :("
